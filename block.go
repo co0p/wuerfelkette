@@ -2,6 +2,7 @@ package wuerfelkette
 
 import (
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"time"
 )
@@ -33,10 +34,10 @@ func NewBlock(data Data, previousBlock Block) Block {
 }
 
 // GenesisBlock constructs a new Block with a valid hash and no previous block
-func GenesisBlock(data Data) Block {
+func GenesisBlock() Block {
 	newBlock := Block{
-		timestamp: time.Now(),
-		data:      data,
+		timestamp: time.Date(1, 1, 1, 1, 1, 1, 1, time.Local),
+		data:      Data("genesis"),
 	}
 	newBlock.hash()
 
@@ -50,7 +51,9 @@ func (block *Block) GetHash() Hash {
 
 // hash() hashes the
 func (block *Block) hash() {
-	h := sha256.New()
+	hasher := sha256.New()
 	str := fmt.Sprintf("%v", block)
-	h.Write([]byte(str))
+	hasher.Write([]byte(str))
+	demo := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	block.ownHash = Hash(demo)
 }
