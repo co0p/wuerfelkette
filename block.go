@@ -19,14 +19,16 @@ type Block struct {
 	data         Data
 	previousHash Hash
 	ownHash      Hash
+	noonce       string
 }
 
 // NewBlock constructs a new Block with a valid hash
-func NewBlock(data Data, previousBlock Block) Block {
+func NewBlock(data Data, previousBlock Block, noonce string) Block {
 	newBlock := Block{
 		timestamp:    time.Now(),
 		data:         data,
 		previousHash: previousBlock.GetHash(),
+		noonce:       noonce,
 	}
 	newBlock.hash()
 
@@ -49,11 +51,20 @@ func (block *Block) GetHash() Hash {
 	return block.ownHash
 }
 
+// GetPreviousHash returns the hash of the previous block
+func (block *Block) GetPreviousHash() Hash {
+	return block.previousHash
+}
+
 // hash() hashes the
 func (block *Block) hash() {
 	hasher := sha256.New()
-	str := fmt.Sprintf("%v", block)
+	str := fmt.Sprintf("%s - %s - %s - %s - %s", block.data, block.timestamp, block.ownHash, block.previousHash, block.noonce)
 	hasher.Write([]byte(str))
 	demo := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 	block.ownHash = Hash(demo)
+}
+
+func (block *Block) String() string {
+	return "block: " + string(block.data)
 }
