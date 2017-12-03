@@ -18,7 +18,7 @@ func (m *SimpleMiner) Mine(data Data, pBlock Block, diff Difficulty) Block {
 	var block = NewBlock(data, pBlock, noonce)
 
 	counter := 0
-	for !m.validate(block, Easy) {
+	for !m.validate(block, diff) {
 		counter = counter + 1
 		noonce = strconv.Itoa(counter)
 		block = NewBlock(data, pBlock, noonce)
